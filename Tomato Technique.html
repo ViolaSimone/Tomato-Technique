@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #timer {
+            text-align: center;
+        }
+        #time {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 16px;
+            padding: 10px 20px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="timer">
+        <div id="time">25:00</div>
+        <button onclick="startTimer()">Start</button>
+        <button onclick="resetTimer()">Reset</button>
+        <audio id="alarm-sound" src="path/to/your/alarm-sound.mp3"></audio> <!-- Sostituisci con il percorso del tuo file audio -->
+    </div>
+    <script>
+        let timer;
+        let isRunning = false;
+        let isWorkTime = true;
+        let workTime = 25 * 60; // 25 minutes
+        let breakTime = 5 * 60; // 5 minutes
+        let currentTime = workTime;
+        const alarmSound = document.getElementById('alarm-sound');
+
+        function updateTime() {
+            const minutes = Math.floor(currentTime / 60).toString().padStart(2, '0');
+            const seconds = (currentTime % 60).toString().padStart(2, '0');
+            document.getElementById('time').textContent = `${minutes}:${seconds}`;
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            isRunning = true;
+            timer = setInterval(() => {
+                if (currentTime > 0) {
+                    currentTime--;
+                    updateTime();
+                } else {
+                    clearInterval(timer);
+                    isRunning = false;
+                    alarmSound.play();
+                    isWorkTime = !isWorkTime;
+                    currentTime = isWorkTime ? workTime : breakTime;
+                    updateTime();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            isWorkTime = true;
+            currentTime = workTime;
+            updateTime();
+        }
+    </script>
+</body>
+</html>
